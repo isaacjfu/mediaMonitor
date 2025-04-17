@@ -1,0 +1,75 @@
+[
+    {
+        "name" : "Automotive-News",
+        "url" : "https://www.autonews.com/news/",
+        "selenium" : 0,
+        "selenium_selector_str" : "div.u-flex.u-w-full.u-flex-col a",
+        "soup_selector_ele" : "a",
+        "soup_selector_identifier"  : {"data-testid": "header-story-title"}
+    }, 
+    {
+        "name" : "Motortrend",
+        "url" : "https://www.motortrend.com/auto-news/",
+        "selenium" : 0,
+        "selenium_selector_str" : "",
+        "soup_selector_ele" : "a",
+        "soup_selector_identifier"  : {"data-ids": "Card"}
+    },
+    {
+        "name" : "Car And Driver",
+        "url" : "https://www.caranddriver.com/news",
+        "selenium" : 0,
+        "selenium_selector_str" : "div.u-flex.u-w-full.u-flex-col a",
+        "soup_selector_ele" : "a",
+        "soup_selector_identifier"  : {"data-testid": "header-story-title"}
+    },
+    {
+        "name" : "Autoblog",
+        "url" : "https://www.autoblog.com",
+        "selenium_selector_str" : "div.u-flex.u-w-full.u-flex-col a",
+        "soup_selector_ele" : "a",
+        "soup_selector_identifier"  : {"data-testid": "header-story-title"}
+    },
+    {
+        "name" : "Jalopnik",
+        "url" : "https://www.jalopnik.com",
+        "selenium_selector_str" : "div.u-flex.u-w-full.u-flex-col a",
+        "soup_selector_ele" : "a",
+        "soup_selector_identifier"  : {"data-testid": "header-story-title"}
+    },
+    {
+        "name" : "The Truth About Cars",
+        "url" : "https://www.thetruthaboutcars.com",
+        "selenium_selector_str" : "div.u-flex.u-w-full.u-flex-col a",
+        "soup_selector_ele" : "a",
+        "soup_selector_identifier"  : {"data-testid": "header-story-title"}
+    },
+    {
+        "name" : "Tianyancha",
+        "url" : "https://www.tianyancha.com",
+        "selenium_selector_str" : "div.u-flex.u-w-full.u-flex-col a",
+        "soup_selector_ele" : "a",
+        "soup_selector_identifier"  : {"data-testid": "header-story-title"}
+    },
+    {
+        "name" : "QCC",
+        "url" : "https://www.qcc.com",
+        "selenium_selector_str" : "div.u-flex.u-w-full.u-flex-col a",
+        "soup_selector_ele" : "a",
+        "soup_selector_identifier"  : {"data-testid": "header-story-title"}
+    },
+    {
+        "name" : "Aiqicha Baidu",
+        "url" : "https://www.aiqicha.baidu.com",
+        "selenium_selector_str" : "div.u-flex.u-w-full.u-flex-col a",
+        "soup_selector_ele" : "a",
+        "soup_selector_identifier"  : {"data-testid": "header-story-title"}
+    },
+    {
+        "name" : "Baike Baidu",
+        "url" : "https://www.baike.baidu.com",
+        "selenium_selector_str" : "div.u-flex.u-w-full.u-flex-col a",
+        "soup_selector_ele" : "a",
+        "soup_selector_identifier"  : {"data-testid": "header-story-title"}
+    }
+]

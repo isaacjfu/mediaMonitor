@@ -7,6 +7,8 @@ from dotenv import load_dotenv
 import os
 from urllib.parse import urljoin
 import sys
+import feedparser
+import json
 # --- Selenium Imports ---
 from selenium import webdriver
 from selenium.webdriver.chrome.service import Service # Or Firefox service
@@ -19,26 +21,13 @@ from selenium.common.exceptions import TimeoutException, WebDriverException
 # add selenium in requirements
 # add lxml
 # add dotenv
+# add feedparser
 load_dotenv()
-# List of news website URLs to monitor
-# IMPORTANT: Check the website's robots.txt and terms of service before scraping!
-# Example websites (replace with your targets):
-NEWS_WEBSITES = {
-    'Automotive-News': 'https://www.autonews.com/news/',
-    # 'Motortrend': 'https://www.motortrend.com',
-    # 'Car and Driver' : 'https://www.caranddriver.com',
-    # 'Autoblog' : 'https://www.autoblog.com',
-    # 'Jalopnik' : 'https://www.jalopnik.com',
-    # 'The Truth About Cars' : 'https://www.thetruthaboutcars.com',
-    # 'Tianyancha': 'https://www.tianyancha.com',
-    # 'QCC' : 'https://www.qcc.com',
-    # 'Aiqicha Baidu' : 'https://www.aiqicha.baidu.com',
-    # 'Baike Baidu' : 'https://www.baike.baidu.com'
-    # Add more sites as needed
-}
+with open('news_websites.json') as f:
+    NEWS_WEBSITES_TWO = json.load(f)
 
 # List of keywords or topics to track
-KEYWORDS = ['isdera', 'isdera motors', 'isderaAG', 'Trump', 'GM']
+KEYWORDS = ['isdera', 'isdera motors', 'isderaAG', 'Trump', 'GM', 'Hertz', 'Hyundai']
 
 # --- Optional: Email Notification Settings ---
 SEND_EMAIL_NOTIFICATIONS = False # Set to True to enable email notifications
@@ -59,7 +48,20 @@ def safe_print(text):
         print(f"Error printing message: {e}")
         print(repr(text))
 
-def fetch_html_with_selenium(url, site_name):
+def fetch_html_without_selenium(url):
+     """Fetches HTML content from a given URL."""
+     try:
+         # Send an HTTP GET request to the URL
+         # Include a User-Agent header to mimic a browser visit
+         headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3'}
+         response = requests.get(url, headers=headers, timeout=10) # Added timeout
+         response.raise_for_status()  # Raise an exception for bad status codes (4xx or 5xx)
+         return response.text
+     except requests.exceptions.RequestException as e:
+         print(f"Error fetching {url}: {e}")
+         return None
+     
+def fetch_html_with_selenium(url, site_name, selenium_selector_str):
     """Fetches dynamically loaded HTML content from a given URL using Selenium."""
     driver = None # Initialize driver to None
     html_content = None # Initialize html_content
@@ -91,7 +93,7 @@ def fetch_html_with_selenium(url, site_name):
         # *** THIS IS STILL A GUESS - INSPECT THE RENDERED PAGE TO CONFIRM/FIND A BETTER SELECTOR ***
         # The selector below targets an <a> tag inside a div that has several utility classes seen in the static source.
         wait_timeout = 25 # Increased timeout slightly
-        wait_selector_str = 'div.u-flex.u-w-full.u-flex-col a' # Wait for any link inside the likely container
+        wait_selector_str = selenium_selector_str # Wait for any link inside the likely container
         wait_selector = (By.CSS_SELECTOR, wait_selector_str)
 
         safe_print(f"Waiting up to {wait_timeout}s for element '{wait_selector_str}' to load...")
@@ -146,7 +148,7 @@ def fetch_html_with_selenium(url, site_name):
             driver.quit()
 
 
-def parse_news(html_content, base_url):
+def parse_news(html_content, base_url,soup_ele,soup_identifier):
     """Parses HTML (potentially rendered by JS) to find news headlines and links."""
     found_articles = {}
     if not html_content:
@@ -168,7 +170,7 @@ def parse_news(html_content, base_url):
         # headline_tags = soup.select('div.PromoA-title a') # Find links inside div.PromoA-title
         # headline_tags = soup.select('a[data-testid="header-story-title"]') # Try data-testid again on rendered HTML
         # *** REPLACE THE SELECTOR BELOW WITH THE CORRECT ONE FOR AUTONEWS.COM ***
-        headline_tags = soup.find_all('a', {'data-testid': 'header-story-title'}) # Example selector
+        headline_tags = soup.find_all(soup_ele, soup_identifier) # Example selector
 
         safe_print(f"Found {len(headline_tags)} potential headline tags.")
 
@@ -250,13 +252,13 @@ if __name__ == "__main__":
             safe_print(f"\n--- Checking for news at {current_time_str} ---")
             all_relevant_articles_this_run = {}
 
-            for site_name, url in NEWS_WEBSITES.items():
-                safe_print(f"Checking {site_name} ({url})...")
+            for website in NEWS_WEBSITES_TWO:
+                safe_print(f"Checking {website['name']} ({website['url']})...")
                 # Pass site_name to fetch function for saving HTML
-                html = fetch_html_with_selenium(url, site_name)
+                html = fetch_html_with_selenium(website['url'], website['name'],website['selenium_selector_str']) if website['selenium'] else fetch_html_without_selenium(website['url'])
 
                 if html:
-                    articles = parse_news(html, url)
+                    articles = parse_news(html, website['url'],website['soup_selector_ele'],website['soup_selector_identifier'])
                     relevant_articles = check_keywords(articles, KEYWORDS)
 
                     newly_found = {}
@@ -267,15 +269,15 @@ if __name__ == "__main__":
                             previously_found.add(article_id) # Add link to seen set
 
                     if newly_found:
-                        safe_print(f"Found {len(newly_found)} new relevant article(s) on {site_name}:")
+                        safe_print(f"Found {len(newly_found)} new relevant article(s) on {website['name']}:")
                         for headline, link in newly_found.items():
                             safe_print(f"  - Headline: {headline}")
                             safe_print(f"    Link: {link}")
                         all_relevant_articles_this_run.update(newly_found)
                     else:
-                        safe_print(f"No new relevant articles found on {site_name}.")
+                        safe_print(f"No new relevant articles found on {website['name']}.")
                 else:
-                     safe_print(f"Failed to fetch HTML for {site_name}.")
+                     safe_print(f"Failed to fetch HTML for {website['name']}.")
 
                 # Add a delay between checking different sites
                 safe_print(f"Waiting a few seconds before checking next site...")
