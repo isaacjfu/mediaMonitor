@@ -1,0 +1,72 @@
+{
+    "keywords" : ["isdera", "Hertz", "Hyundai", "Subaru","toolbox", "星辉集团", "星辉汽车科技（海南）有限公司", "鹰兹汽车科技（上海）有限公司", "鹰兹汽车安徽有限公司"],
+    "websites" : [
+        {
+            "name" : "Car And Driver",
+            "url" : "https://www.caranddriver.com/rss/all.xml/",
+            "rss" : 1
+        },
+        {
+            "name" : "Road and Track",
+            "url" : "https://www.roadandtrack.com/rss/all.xml/",
+            "rss" : 1
+        },
+        {
+            "name" : "Jalopnik",
+            "url" : "https://jalopnik.com/rss?x=1​",
+            "rss" : 1
+        },
+        {
+            "name" : "Google News",
+            "url" : "https://news.google.com/rss/topics/CAAqJggKIiBDQkFTRWdvSUwyMHZNRGx1YlY4U0FtVnVHZ0pWVXlnQVAB?hl=en-US&gl=US&ceid=US:en",
+            "rss" : 1
+        },
+        {
+            "name" : "Autoexpress",
+            "url" : "https://www.autoexpress.co.uk/feed/all",
+            "rss" : 1
+        },
+        {
+            "name" : "Tianyancha",
+            "url" : "https://www.tianyancha.com",
+            "rss" : 0,
+            "selenium_selector_str" : "div.u-flex.u-w-full.u-flex-col a",
+            "soup_selector_ele" : "a",
+            "soup_selector_identifier"  : {"data-testid": "header-story-title"}
+        },
+        {
+            "name" : "QCC",
+            "url" : "https://www.qcc.com",
+            "rss" : 0,
+            "selenium_selector_str" : "div.u-flex.u-w-full.u-flex-col a",
+            "soup_selector_ele" : "a",
+            "soup_selector_identifier"  : {"data-testid": "header-story-title"}
+        },
+        {
+            "name" : "Aiqicha Baidu",
+            "url" : "https://www.aiqicha.baidu.com",
+            "rss" : 0,
+            "selenium_selector_str" : "div.u-flex.u-w-full.u-flex-col a",
+            "soup_selector_ele" : "a",
+            "soup_selector_identifier"  : {"data-testid": "header-story-title"}
+        },
+        {
+            "name" : "Baike Baidu",
+            "url" : "https://www.baike.baidu.com",
+            "rss" : 0,
+            "selenium_selector_str" : "div.u-flex.u-w-full.u-flex-col a",
+            "soup_selector_ele" : "a",
+            "soup_selector_identifier"  : {"data-testid": "header-story-title"}
+        },    
+        {
+            "name" : "Automotive-News",
+            "url" : "https://www.autonews.com/news/",
+            "rss" : 0,
+            "selenium" : 1,
+            "selenium_selector_str" : "div.u-flex.u-w-full.u-flex-col a",
+            "soup_selector_ele" : "a",
+            "soup_selector_identifier"  : {"data-testid": "header-story-title"}
+        }
+    ]
+}
+    

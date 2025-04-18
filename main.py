@@ -18,16 +18,20 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.chrome.options import Options # Or Firefox options
 from selenium.common.exceptions import TimeoutException, WebDriverException
 # --- Configuration ---
-# add selenium in requirements
-# add lxml
-# add dotenv
-# add feedparser
 load_dotenv()
 
-with open('news_websites.json') as f:
-    NEWS_WEBSITES_TWO = json.load(f)
-# List of keywords or topics to track
-KEYWORDS = ['isdera', 'ford', 'toyota', 'Trump', 'GM', 'Hertz', 'Hyundai', 'Subaru','toolbox']
+# Load NEWS_WEBSITES and KEYWORDS from config.json file
+try:
+    with open('config.json', 'r', encoding='utf-8') as f:
+        data = json.load(f)
+        NEWS_WEBSITES = data['websites']
+        KEYWORDS = data['keywords']
+except FileNotFoundError:
+    print('Error: The file config.json was not found')
+except json.JSONDecodeError:
+    print('Error: Invalid JSON found in config.json')
+except Exception as e:
+    print("Error: {e}")
 
 # --- Optional: Email Notification Settings ---
 SEND_EMAIL_NOTIFICATIONS = False # Set to True to enable email notifications
@@ -248,7 +252,7 @@ def send_email(subject, body):
 # --- Main Monitoring Loop ---
 
 if __name__ == "__main__":
-    safe_print("Starting news monitor (Selenium version)...")
+    safe_print("Starting news monitor ...")
     previously_found = set() # Using links to track previously found articles
 
     try:
@@ -257,7 +261,7 @@ if __name__ == "__main__":
             safe_print(f"\n--- Checking for news at {current_time_str} ---")
             all_relevant_articles_this_run = {}
 
-            for website in NEWS_WEBSITES_TWO:
+            for website in NEWS_WEBSITES:
                 safe_print(f"Checking {website['name']} ({website['url']})...")
 
                 # Retrieve articles either using RSS or webscraping from HTML             
