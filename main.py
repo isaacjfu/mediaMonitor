@@ -23,11 +23,11 @@ from selenium.common.exceptions import TimeoutException, WebDriverException
 # add dotenv
 # add feedparser
 load_dotenv()
+
 with open('news_websites.json') as f:
     NEWS_WEBSITES_TWO = json.load(f)
-
 # List of keywords or topics to track
-KEYWORDS = ['isdera', 'isdera motors', 'isderaAG', 'Trump', 'GM', 'Hertz', 'Hyundai']
+KEYWORDS = ['isdera', 'ford', 'toyota', 'Trump', 'GM', 'Hertz', 'Hyundai', 'Subaru','toolbox']
 
 # --- Optional: Email Notification Settings ---
 SEND_EMAIL_NOTIFICATIONS = False # Set to True to enable email notifications
@@ -84,14 +84,6 @@ def fetch_html_with_selenium(url, site_name, selenium_selector_str):
         safe_print(f"Loading URL with Selenium: {url}")
         driver.get(url)
 
-        # --- IMPORTANT: Wait for dynamic content to load ---
-        # Adjust the wait time and the element selector based on the target website.
-        # You need to inspect the *rendered* page in your browser to find a reliable
-        # element/class/id that appears *after* the news articles are loaded by JavaScript.
-        #
-        # Attempting to wait for a link within the likely main content container.
-        # *** THIS IS STILL A GUESS - INSPECT THE RENDERED PAGE TO CONFIRM/FIND A BETTER SELECTOR ***
-        # The selector below targets an <a> tag inside a div that has several utility classes seen in the static source.
         wait_timeout = 25 # Increased timeout slightly
         wait_selector_str = selenium_selector_str # Wait for any link inside the likely container
         wait_selector = (By.CSS_SELECTOR, wait_selector_str)
@@ -156,21 +148,8 @@ def parse_news(html_content, base_url,soup_ele,soup_identifier):
         return found_articles
 
     try:
-        # Use 'lxml' if installed, it's generally better for complex HTML
         soup = BeautifulSoup(html_content, 'lxml')
-
-        # --- IMPORTANT: Customize this part for EACH website ---
-        # You MUST inspect the RENDERED autonews.com page in your browser
-        # (or inspect the saved AutoNews_source.html file) to find the correct
-        # HTML tags and attributes for the headlines AFTER JavaScript loads.
-        #
-        # Example: Look for <h3> tags with a specific class. REPLACE THIS!
-        # Possible selectors based on inspecting typical Arc Publishing sites:
-        # headline_tags = soup.select('h3.PromoA-title a') # Find links inside h3.PromoA-title
-        # headline_tags = soup.select('div.PromoA-title a') # Find links inside div.PromoA-title
-        # headline_tags = soup.select('a[data-testid="header-story-title"]') # Try data-testid again on rendered HTML
-        # *** REPLACE THE SELECTOR BELOW WITH THE CORRECT ONE FOR AUTONEWS.COM ***
-        headline_tags = soup.find_all(soup_ele, soup_identifier) # Example selector
+        headline_tags = soup.find_all(soup_ele, soup_identifier) 
 
         safe_print(f"Found {len(headline_tags)} potential headline tags.")
 
@@ -191,16 +170,9 @@ def parse_news(html_content, base_url,soup_ele,soup_identifier):
                  if link_href.startswith(('http://', 'https://')):
                      # Avoid duplicates based on headline text for this run
                      if headline_text not in found_articles:
-                          found_articles[headline_text] = link_href
+                        found_articles[headline_text] = [link_href,'']
                  else:
                      safe_print(f"Skipping invalid or relative link: {link_href}")
-
-             # Add more debug info if needed
-             # else:
-             #    safe_print(f"Skipping tag: No text or href found. Tag: {link_tag}")
-
-
-        # --- End of customization section ---
 
     except Exception as e:
         safe_print(f"Error parsing HTML for {base_url}: {e}")
@@ -210,14 +182,47 @@ def parse_news(html_content, base_url,soup_ele,soup_identifier):
 
     return found_articles
 
+def parse_rss(FEED_URL):
+    print(f"Fetching and parsing feed from: {FEED_URL}")
+    # The parse() function downloads and parses the feed content.
+    feed = feedparser.parse(FEED_URL)
+
+    found_articles = {}
+    # --- Check for Errors ---
+    # feedparser sets feed.bozo to 1 if potential problems were encountered during parsing
+    if feed.bozo:
+        print(f"Warning: Potential feed parsing issue detected. Bozo flag is set.")
+        # You might want to inspect the bozo_exception for details
+        if hasattr(feed, 'bozo_exception'):
+            print(f"Bozo Exception: {feed.bozo_exception}")
+
+    # --- Access Feed Entries (Items) ---
+    # feed.entries is a list of dictionaries, each representing an item/article
+    if not feed.entries:
+        print("No entries found in the feed.")
+    else:
+        print(f"Found {len(feed.entries)} entries:\n")
+        # Loop through the first 5 entries (or all if fewer than 5)
+        for entry in feed.entries[:5]:
+            headline = entry.get('title', 'N/A') # Use .get() for safe access
+            link = entry.get('link', 'N/A')
+            description = entry.get('description', 'N/A')
+
+            found_articles[headline] = [link,description]
+    return found_articles
+
 # (check_keywords and send_email functions remain the same)
 def check_keywords(articles, keywords):
     """Checks if article headlines contain any of the specified keywords."""
     relevant_articles = {}
-    for headline, link in articles.items():
+    for headline, item in articles.items():
+        link = item[0]
+        description = item[1]
         # Check if any keyword (case-insensitive) is in the headline
-        if any(keyword.lower() in headline.lower() for keyword in keywords):
-            relevant_articles[headline] = link
+        matched_keywords = [keyword for keyword in keywords 
+                    if keyword.lower() in headline.lower() or keyword.lower() in description.lower()]
+        if matched_keywords:
+           relevant_articles[headline] = [link,matched_keywords,description] 
     return relevant_articles
 
 def send_email(subject, body):
@@ -254,30 +259,35 @@ if __name__ == "__main__":
 
             for website in NEWS_WEBSITES_TWO:
                 safe_print(f"Checking {website['name']} ({website['url']})...")
-                # Pass site_name to fetch function for saving HTML
-                html = fetch_html_with_selenium(website['url'], website['name'],website['selenium_selector_str']) if website['selenium'] else fetch_html_without_selenium(website['url'])
 
-                if html:
+                # Retrieve articles either using RSS or webscraping from HTML             
+                if website['rss']:
+                    articles = parse_rss(website['url'])
+                else:
+                    html = fetch_html_with_selenium(website['url'], website['name'],website['selenium_selector_str']) if website['selenium'] else fetch_html_without_selenium(website['url'])
                     articles = parse_news(html, website['url'],website['soup_selector_ele'],website['soup_selector_identifier'])
+                # Search articles for any keywords
+                if articles:   
                     relevant_articles = check_keywords(articles, KEYWORDS)
-
                     newly_found = {}
-                    for headline, link in relevant_articles.items():
-                        article_id = link # Use link as the unique ID
+                    for headline, item in relevant_articles.items():
+                        article_id = item[0] # Use link as the unique ID
                         if article_id not in previously_found:
-                            newly_found[headline] = link
+                            newly_found[headline] = [item[0],item[1],item[2]]
                             previously_found.add(article_id) # Add link to seen set
 
                     if newly_found:
                         safe_print(f"Found {len(newly_found)} new relevant article(s) on {website['name']}:")
-                        for headline, link in newly_found.items():
+                        for headline, item in newly_found.items():
                             safe_print(f"  - Headline: {headline}")
-                            safe_print(f"    Link: {link}")
+                            safe_print(f"    Link: {item[0]}")
+                            safe_print(f"    Matched Keywords: {item[1]}")
+                            safe_print(f"    Description: {item[2]}")
                         all_relevant_articles_this_run.update(newly_found)
                     else:
                         safe_print(f"No new relevant articles found on {website['name']}.")
                 else:
-                     safe_print(f"Failed to fetch HTML for {website['name']}.")
+                    safe_print(f"Failed to fetch HTML for {website['name']}.")
 
                 # Add a delay between checking different sites
                 safe_print(f"Waiting a few seconds before checking next site...")

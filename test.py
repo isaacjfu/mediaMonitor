@@ -4,7 +4,7 @@ import time # For accessing published_parsed time tuple
 # --- Configuration ---
 # Replace with the actual RSS feed URL you want to monitor
 # Example using MotorTrend's main feed:
-FEED_URL = "https://www.autonews.com/arc/outboundfeeds/sitemap-news/"
+FEED_URL = "https://www.motortrend.com/feed/"
 # You can often find feed URLs by looking for an RSS icon on the website
 # or searching "[website name] RSS feed".
 
