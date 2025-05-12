@@ -2,6 +2,7 @@ import requests
 from urllib.parse import urljoin
 import json
 import time
+
 # --- Selenium Imports ---
 from selenium import webdriver
 from selenium.webdriver.chrome.service import Service # Or Firefox service
@@ -11,12 +12,13 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.chrome.options import Options # Or Firefox options
 from selenium.common.exceptions import TimeoutException, WebDriverException
 
+
 def fetch_html_with_selenium(url, site_name):
     """Fetches dynamically loaded HTML content from a given URL using Selenium."""
     driver = None # Initialize driver to None
     html_content = None # Initialize html_content
     # Define a filename for saving the source code
-    source_filename = f"{site_name}_source_sel.html"
+    source_filename = f"path/{site_name}_source_sel.html"
     try:
         # Setup Chrome options (headless recommended for background execution)
         chrome_options = Options()
@@ -78,7 +80,7 @@ def fetch_html_with_selenium(url, site_name):
 
 def fetch_html_without_selenium(url, site_name):
      """Fetches HTML content from a given URL."""
-     source_filename = f"{site_name}_source.html"
+     source_filename = f"path/{site_name}_source.html"
      try:
          # Send an HTTP GET request to the URL
          # Include a User-Agent header to mimic a browser visit
