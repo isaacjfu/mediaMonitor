@@ -5,3 +5,4 @@ __pycache__/
 *.html
 test.txt
 test2.txt
+*.pem
