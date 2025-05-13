@@ -1,4 +1,4 @@
-FROM python:3.11-slim-bullseye
+FROM crpi-drioqgczr0409p0l.cn-beijing.personal.cr.aliyuncs.com/isdera/images:python3.11
 
 WORKDIR /app
 
