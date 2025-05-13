@@ -18,7 +18,7 @@ def fetch_html_with_selenium(url, site_name):
     driver = None # Initialize driver to None
     html_content = None # Initialize html_content
     # Define a filename for saving the source code
-    source_filename = f"path/{site_name}_source_sel.html"
+    source_filename = f"html/{site_name}_source_sel.html"
     try:
         # Setup Chrome options (headless recommended for background execution)
         chrome_options = Options()
@@ -50,7 +50,6 @@ def fetch_html_with_selenium(url, site_name):
         except Exception as save_e:
             print(f"Could not save HTML source to file: {save_e}")
         # --- End Save HTML ---
-
         return html_content
 
     except TimeoutException:
@@ -80,7 +79,7 @@ def fetch_html_with_selenium(url, site_name):
 
 def fetch_html_without_selenium(url, site_name):
      """Fetches HTML content from a given URL."""
-     source_filename = f"path/{site_name}_source.html"
+     source_filename = f"html/{site_name}_source.html"
      try:
          # Send an HTTP GET request to the URL
          # Include a User-Agent header to mimic a browser visit
@@ -108,5 +107,8 @@ except Exception as e:
 
 for website in NEWS_WEBSITES:
     if website['rss'] != 1:
+        print(f"Trying to fetch for {website['name']}")
+        print("Fetching only using requests")
         if fetch_html_without_selenium(website['url'],website['name']) == None:
+            print("Fetching with selenium")
             fetch_html_with_selenium(website['url'],website['name'])

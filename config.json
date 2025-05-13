@@ -27,6 +27,11 @@
             "rss" : 1
         },
         {
+            "name" : "Autoexpress",
+            "url" : "https://www.autoexpress.co.uk/",
+            "rss" : 0
+        },
+        {
             "name" : "Tianyancha",
             "url" : "https://www.tianyancha.com",
             "rss" : 0,
@@ -57,7 +62,7 @@
             "selenium_selector_str" : "div.u-flex.u-w-full.u-flex-col a",
             "soup_selector_ele" : "a",
             "soup_selector_identifier"  : {"data-testid": "header-story-title"}
-        },    
+        },
         {
             "name" : "Automotive-News",
             "url" : "https://www.autonews.com/news/",
@@ -69,4 +74,3 @@
         }
     ]
 }
-    
