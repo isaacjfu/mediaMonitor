@@ -3,7 +3,8 @@ FROM crpi-drioqgczr0409p0l.cn-beijing.personal.cr.aliyuncs.com/isdera/images:pyt
 WORKDIR /app
 
 COPY requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt
+COPY packages/ /packages/
+RUN pip install --no-index --find-links=/packages -r requirements.txt
 
 COPY . .
 
