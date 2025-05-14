@@ -22,6 +22,7 @@ def fetch_html_with_selenium(url, site_name):
     try:
         # Setup Chrome options (headless recommended for background execution)
         chrome_options = Options()
+        chrome_options.binary_location = "/usr/bin/chromium"
         chrome_options.add_argument("--headless") # Run without opening a browser window
         chrome_options.add_argument("--disable-gpu")
         chrome_options.add_argument("--no-sandbox")
