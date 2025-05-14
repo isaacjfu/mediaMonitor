@@ -27,13 +27,8 @@
             "rss" : 1
         },
         {
-            "name" : "Autoexpress",
-            "url" : "https://www.autoexpress.co.uk/",
-            "rss" : 0
-        },
-        {
             "name" : "Tianyancha",
-            "url" : "https://www.tianyancha.com",
+            "url" : "https://www.tianyancha.com/search?key=isdera",
             "rss" : 0,
             "selenium_selector_str" : "div.u-flex.u-w-full.u-flex-col a",
             "soup_selector_ele" : "a",
@@ -49,7 +44,7 @@
         },
         {
             "name" : "Aiqicha Baidu",
-            "url" : "https://www.aiqicha.baidu.com",
+            "url" : "https://aiqicha.baidu.com",
             "rss" : 0,
             "selenium_selector_str" : "div.u-flex.u-w-full.u-flex-col a",
             "soup_selector_ele" : "a",
@@ -57,17 +52,8 @@
         },
         {
             "name" : "Baike Baidu",
-            "url" : "https://www.baike.baidu.com",
+            "url" : "https://baike.baidu.com",
             "rss" : 0,
-            "selenium_selector_str" : "div.u-flex.u-w-full.u-flex-col a",
-            "soup_selector_ele" : "a",
-            "soup_selector_identifier"  : {"data-testid": "header-story-title"}
-        },
-        {
-            "name" : "Automotive-News",
-            "url" : "https://www.autonews.com/news/",
-            "rss" : 0,
-            "selenium" : 1,
             "selenium_selector_str" : "div.u-flex.u-w-full.u-flex-col a",
             "soup_selector_ele" : "a",
             "soup_selector_identifier"  : {"data-testid": "header-story-title"}

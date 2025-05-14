@@ -85,6 +85,8 @@ def fetch_html_without_selenium(url, site_name):
          # Include a User-Agent header to mimic a browser visit
          headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3'}
          response = requests.get(url, headers=headers, timeout=10) # Added timeout
+         response.encoding = 'gbk'
+         #response.encoding = 'gb2312'
          response.raise_for_status()  # Raise an exception for bad status codes (4xx or 5xx)
          with open(source_filename,'w') as f:
              f.write(response.text)
@@ -109,6 +111,6 @@ for website in NEWS_WEBSITES:
     if website['rss'] != 1:
         print(f"Trying to fetch for {website['name']}")
         print("Fetching only using requests")
-        if fetch_html_without_selenium(website['url'],website['name']) == None:
-            print("Fetching with selenium")
-            fetch_html_with_selenium(website['url'],website['name'])
+        fetch_html_without_selenium(website['url'],website['name'])
+        print("Fetching with selenium")
+        fetch_html_with_selenium(website['url'],website['name'])
