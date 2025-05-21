@@ -8,3 +8,5 @@ test2.txt
 *.pem
 html/
 chrome/
+packages/
+debs/
