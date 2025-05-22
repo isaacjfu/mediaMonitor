@@ -4,9 +4,7 @@ import json
 import time
 
 # --- Selenium Imports ---
-import undetected_chromedriver as uc
-from selenium.common.exceptions import TimeoutException, WebDriverException
-
+from seleniumbase import Driver
 
 def fetch_html_with_selenium(url, site_name):
     """Fetches dynamically loaded HTML content from a given URL using Selenium."""
@@ -16,24 +14,24 @@ def fetch_html_with_selenium(url, site_name):
     source_filename = f"html/{site_name}_source_sel.html"
     try:
         # Setup Chrome options (headless recommended for background execution)
-        options = uc.ChromeOptions()
-        options.binary_location = "/usr/bin/chromium"
-        options.add_argument("--headless")  # Run in headless mode
-        options.add_argument("--disable-gpu")
-        options.add_argument("--no-sandbox")
-        options.add_argument("--window-size=1920,1080")
-        options.add_argument("--disable-blink-features=AutomationControlled")
-        options.add_argument("user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/90.0.4430.212 Safari/537.36")
+        # options = uc.ChromeOptions()
+        # options.binary_location = "/usr/bin/chromium"
+        # options.add_argument("--headless")  # Run in headless mode
+        # options.add_argument("--disable-gpu")
+        # options.add_argument("--no-sandbox")
+        # options.add_argument("--window-size=1920,1080")
+        # options.add_argument("--disable-blink-features=AutomationControlled")
+        # options.add_argument("user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/90.0.4430.212 Safari/537.36")
 
         # Initialize WebDriver (assuming chromedriver is in PATH)
         # If not in PATH, use: driver = webdriver.Chrome(service=service, options=chrome_options)
-        driver = uc.Chrome(options=options, headless = True, use_subprocess = True)
-        driver.implicitly_wait(5) # Basic implicit wait
+        driver = Driver(uc=True)
+        #driver.implicitly_wait(5) # Basic implicit wait
 
-        print(f"Loading URL with Selenium: {url}")
-        driver.get(url)
+        print(f"Loading URL with SeleniumBase: {url}")
+        driver.uc_open_with_reconnect(url,4)
 
-        time.sleep(15)
+        #time.sleep(15)
 
         # Get the page source *after* JavaScript has potentially run
         html_content = driver.page_source
